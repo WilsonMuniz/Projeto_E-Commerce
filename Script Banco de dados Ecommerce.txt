@@ -146,4 +146,3 @@ create table ProdutoPedido(
     primary key (IdProdLoc, IdEstoque),
     constraint fk_produto_localização foreign key (IdEstoque) references estoque (IdEstoque)
 );
-
