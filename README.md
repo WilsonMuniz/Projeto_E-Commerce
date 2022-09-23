@@ -1,2 +1,3 @@
 # Projeto_E-Commerce
-Refinando um Projeto Conceitual de Banco de Dados – E-COMMERCE
+Projeto Conceitual ecommerc,
+Script para criação do banco de dat SQL,
