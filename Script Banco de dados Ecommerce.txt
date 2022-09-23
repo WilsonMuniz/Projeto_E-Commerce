@@ -1,0 +1,149 @@
+-- Projeto "Scrit" Banco de Dados Ecommerce
+
+create database ecommerce;
+use ecommerce;
+
+-- Cria tabela de Cliente
+create table cliente (
+    IdCliente int auto_increment primary key,
+    Nome varchar(15) not null,
+    Sobrenome varchar(90) not null,
+    DataNasc date not null,
+    CPF varchar(10) not null,
+    Email varchar(90) not null,
+    Sexo enum('Feminino','Masculino') default 'Não_informado'
+    DDD char(2) not null,
+    TelCelular char(9) not null,
+    TelFixo char(9),
+    Endereço varchar(50) not null,
+    Numero char(5) not null,
+    Complemento varchar(15),
+    Bairro varchar(40) not null,
+    Cidade varchar(20) not null,
+    Estado char(2) not null,
+    Pais char(2) not null,
+    constraint unique_cliente unique (CPF)
+);
+
+-- Cria tabela de Produto
+create table produto(
+    IdProduto int auto_increment primary key,
+    Nome varchar(45) not null,
+    DataCadastro date not null,
+    Peso float not null,
+    Embalagem double not null,
+    Codigo_Barra varchar(25) not null,
+    Categoria Enum('Brinquedos', 'Eletronicos', 'Vestuario', 'Moveis', 'Esporte') not null,
+    FichaTecnica varchar(255)
+);
+    
+-- Cria tabela de Pedido
+create table pedido(
+	IdPedido int auto_increment primary key,
+    IdCliente int,
+    DataCompra date,
+    Situação ENUM('Em Separação', 'A caminho', 'Entregue'),
+    Quantidade int default 1,
+    Pagamento ENUM('Boleto', 'Cartão', 'Dois Cartão', 'Pix') not null,
+    constraint fk_cliente foreign key (IdCliente) references Cliente(IdCliente)
+    );
+  
+-- Criar tabela de forma de Pagamento
+create table pagamento(
+    IdPagamento int auto_increment,
+    DataPagamento datetime,
+    IdPedido int,
+    IdCliente int,
+    TipoPagamento enum('Boleto','Cartão','Dois Cartões','Pix') default 'Boleto',
+    primary key (IdPagamento, IdCliente,IdPedido),
+    constraint fk_cliente foreign key (IdCliente) references cliente (IdCliente)
+    constraint fk_pedido foreign key (IdPedido) references pedido (IdPedido)
+);
+
+-- Cria tabela de Estoque
+create table estoque(
+    IdEstoque int auto_increment primary key,
+    Localização varchar(20),
+	Quantidade int default 0
+);
+
+-- Criar tabela de Fornecedor
+create table fornecedor(
+    IdFornecedor int auto_increment primary key,
+    RazaoSocial varchar(45) not null,
+    DataCadastro date not null,
+    CNPJ char(15) not null,
+    Email varchar(45) not null,
+    DDD char(2) not null,
+    TelCelular char(9) not null,
+    TelFixo char(9),
+    Endereço varchar(25) not null,
+    Numero char(5) not null,
+    Complemento varchar(15),
+    Bairro varchar(20) not null,
+    Cidade varchar(15) not null,
+    Estado char(2) not null,
+    Pais char(2) not null,
+    PrazoEntregua char(3) not null,
+    constraint unique_fornec unique (CNPJ) 
+);
+
+-- Criar tabela de Vendedor
+create table vendedor (
+    IdVendedor int auto_increment primary key,
+    Nome varchar(45) not null,
+    DataCadastro date not null,
+    CPF char(10) default 0,
+    CNPJ char(11) default 0,
+    Email varchar(45) not null,
+    DDD char(2) not null,
+    TelCelular char(9) not null,
+    TelFixo char(9),
+    Endereço varchar(25) not null,
+    Numero char(5) not null,
+    Complemento varchar(15),
+    Bairro varchar(20) not null,
+    Cidade varchar(15) not null,
+    Estado char(2) not null,
+    Pais char(2) not null,
+    constraint unique_cpf unique(CPF),
+    constraint unique_cnpj unique(CNPJ) 
+);
+
+-- Criar tabela de Produto-Vendedor (productseller)
+create table ProdutoVendedor(
+    IdProdVend int auto_increment,
+    IdProduto int,
+    Quantidade int default 1,
+    primary key (IdProdVend, IdProduto),
+    constraint fk_produto_produto foreign key (IdProduto) references produto (IdProduto)
+);
+
+-- Criar tabela de Produto por Pedido (ProductOrder) 
+create table ProdutoPedido(
+    IdProdPed int auto_increment,
+    IdProduto int,
+    Quantidade int default 1,
+    Situação enum('Disponível','Sem Estoque') default 'Disponível',
+    primary key (IdProdPed, IdProduto),
+    constraint fk_produto_pedido foreign key (IdProduto) references produto (IdProduto)
+);
+
+-- Criar tabela de Produto em Estoque
+ create table  ProdutoEstoque(
+    IdProdEst int auto_increment,
+    IdProduto int,
+    Quantidade int default 1,
+    primary key (IdProdEst, IdProduto),
+    constraint fk_produto_estoque foreign key (IdProduto) references produto (IdProduto)
+);
+
+-- Criar tabela de Produto em Estoque
+ create table  ProdutoLocalização(
+    IdProdLoc int,
+    IdEstoque int,
+    Localização varchar (255),
+    primary key (IdProdLoc, IdEstoque),
+    constraint fk_produto_localização foreign key (IdEstoque) references estoque (IdEstoque)
+);
+
